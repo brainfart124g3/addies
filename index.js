@@ -34,7 +34,7 @@ async function getValues() {
       let type = json.items[item][5] >= 0 ? json.items[item][5] : 0;
       itemValues[item] = { value: Math.abs(json.items[item][4]), type: type }; //assings the item values and demand
     }
-    //console.log(itemValues)
+    console.log(itemValues)
     getInv();
   }).catch((err) => {
     console.log(err);
@@ -52,8 +52,8 @@ async function getInv() {
   }).then((res) => res.json()).then((json) => {
     playerInv = json.playerAssets; //gets the players inv
     onHold = json.holds; //assigns these items on hold
-    //console.log(playerInv);
-    //console.log(onHold);
+    console.log(playerInv);
+    console.log(onHold);
     generateAd();
   }).catch((err) => {
     console.log(err);
@@ -87,10 +87,10 @@ function generateAd() {
     }
   }
 
-  //console.log("availableItems", availableItems);
+  console.log("availableItems", availableItems);
 
   let sendingSideNum = Math.floor(Math.random() * (config.maxItemsSend - config.minItemsSend + 1)) + config.minItemsSend;
-  //console.log("Total Sending Side", sendingSideNum);
+  console.log("Total Sending Side", sendingSideNum);
   let sendingSide = [];
   for (let i = 0; i < sendingSideNum; i++) {
     let item = availableItems[Math.floor(Math.random() * availableItems.length)];
@@ -98,7 +98,7 @@ function generateAd() {
     availableItems.splice(availableItems.indexOf(item), 1);
   }
 
-  //console.log("sending Items", sendingSide);
+  console.log("sending Items", sendingSide);
 
   if (config.smartAlgo) {
     let receivingSide = [];
@@ -106,7 +106,7 @@ function generateAd() {
     for (const item of sendingSide) {
       totalSendValue = totalSendValue + itemValues[item].value;
     }
-    //console.log("Total Send Value", totalSendValue);
+    console.log("Total Send Value", totalSendValue);
     let upgOrDown = Math.floor(Math.random() * 2);
     if (upgOrDown == 1) {
       let requestValue = totalSendValue * (1 - config.RequestPercent / 100);
@@ -119,7 +119,7 @@ function generateAd() {
 
       if (options.length >= 1) {
         let item = options[Math.floor(Math.random(options.length))];
-        //console.log("upgrade Item", item);
+        console.log("upgrade Item", item);
         receivingSide.push(parseFloat(item));
         receivingSide.push("upgrade");
         receivingSide.push("adds");
@@ -132,12 +132,12 @@ function generateAd() {
             itemIdValArr.push({ id: item, value: itemValues[item].value });
           }
         }
-        //console.log(itemIdValArr);
+        console.log(itemIdValArr);
         let validPairs = findValidPairs(itemIdValArr, totalSendValue * (1 - config.RequestPercent / 100), totalSendValue);
         if (validPairs.length > 0) {
           const randomPair = validPairs[Math.floor(Math.random() * validPairs.length)];
           const ids = randomPair.map((item) => item.id);
-          //console.log(ids);
+          console.log(ids);
           for (const id of ids) {
             receivingSide.push(parseFloat(id));
           }
@@ -175,7 +175,7 @@ function generateAd() {
           itemIdValArr.push({ id: item, value: itemValues[item].value });
         }
       }
-      //console.log(itemIdValArr);
+      console.log(itemIdValArr);
       let validPairs = findValidPairs(itemIdValArr, totalSendValue * (1 - config.RequestPercent / 100), totalSendValue);
       if (validPairs.length > 0) {
         const randomPair = validPairs[Math.floor(Math.random() * validPairs.length)];
