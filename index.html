@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Trade Ad Bot Dashboard</title>
+</head>
+<body>
+  <h1>Trade Ad Bot Dashboard</h1>
+  
+  <div id="itemValues"></div>
+  <div id="playerInventory"></div>
+  <div id="recentTradeAds"></div>
+
+  <script>
+    async function fetchItemValuesAndInventory() {
+      const responseItems = await fetch('/items');
+      const dataItems = await responseItems.json();
+      document.getElementById('itemValues').innerHTML = `<h2>Item Values</h2><pre>${JSON.stringify(dataItems.itemValues, null, 2)}</pre>`;
+      document.getElementById('playerInventory').innerHTML = `<h2>Player Inventory</h2><pre>${JSON.stringify(dataItems.playerInventory, null, 2)}</pre>`;
+    }
+
+    async function fetchRecentTradeAds() {
+      const responseAds = await fetch('/recentads');
+      const dataAds = await responseAds.json();
+      document.getElementById('recentTradeAds').innerHTML = `<h2>Recent Trade Ads</h2><pre>${JSON.stringify(dataAds, null, 2)}</pre>`;
+    }
+
+    fetchItemValuesAndInventory();
+    fetchRecentTradeAds();
+
+    setInterval(fetchItemValuesAndInventory, 300000); // Fetch every 5 minutes
+    setInterval(fetchRecentTradeAds, 600000); // Fetch every 10 minutes
+  </script>
+</body>
+</html>
