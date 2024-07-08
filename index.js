@@ -15,6 +15,7 @@ const config = require("./config.json");
 let itemValues = {};
 let playerInv = {};
 let onHold = [];
+let recentTradeAds = [];
 
 async function getValuesAndAd() {
   try {
@@ -220,6 +221,44 @@ async function postAd(sending, receiving) {
   }
 }
 
+async function fetchRecentTradeAds() {
+  try {
+    let response = await fetch(`https://api.rolimons.com/tradeads/v1/yourrecentads`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "cookie": `${rolimonsToken}`
+      },
+    });
+    let json = await response.json();
+    recentTradeAds = json; // Assuming the response is an array of recent trade ads
+  } catch (error) {
+    console.error("Error fetching recent trade ads:", error);
+  }
+}
+
+// Call this function to fetch recent trade ads initially and periodically
+fetchRecentTradeAds();
+setInterval(fetchRecentTradeAds, 600000); // Fetch every 10 minutes
+
+app.get("/", (req, res) => {
+  res.json({ message: 'Trade ad bot is up and running!' });
+});
+
+app.get("/items", (req, res) => {
+  res.json({ itemValues, playerInventory: playerInv });
+});
+
+app.get("/recentads", (req, res) => {
+  res.json(recentTradeAds);
+});
+
+const port = process.env.PORT || 8080;
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
+
+// Start the process
 async function startProcess() {
   try {
     await getValuesAndAd();
@@ -233,12 +272,3 @@ async function startProcess() {
 }
 
 startProcess(); // Start the process
-
-app.get("/", (req, res) => {
-  res.json({ message: 'Trade ad bot is up and running!' });
-});
-
-const port = process.env.PORT || 8080;
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
